@@ -1,0 +1,446 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Havran po slokách</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Alegreya+Sans+SC:wght@500;700&family=Alegreya+Sans:wght@400;500&display=swap">
+<style>
+/* Layout: jeden sloupec – výběr čísla nahoře, pod ním sloka jako list v nočním pokoji, osvětlený lampou */
+:root {
+  --night: #15131d;
+  --surface: #1e1b29;
+  --ink: #e8e3d8;
+  --muted: #9b95aa;
+  --line: #352f49;
+  --lamp: #dcab5c;
+  --lamp-soft: rgba(220, 171, 92, 0.12);
+  --plum: #9479bd;
+  --display: "Cormorant Garamond", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --label: "Alegreya Sans SC", "Gill Sans", "Trebuchet MS", sans-serif;
+  --body: "Alegreya Sans", "Gill Sans", "Trebuchet MS", sans-serif;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --night: #ebe9f0; --surface: #f8f7fa; --ink: #1d1a26; --muted: #5c5770;
+    --line: #d3cfdd; --lamp: #94590f; --lamp-soft: rgba(148, 89, 15, 0.09); --plum: #5d438e;
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --night: #ebe9f0; --surface: #f8f7fa; --ink: #1d1a26; --muted: #5c5770;
+  --line: #d3cfdd; --lamp: #94590f; --lamp-soft: rgba(148, 89, 15, 0.09); --plum: #5d438e;
+  color-scheme: light;
+}
+
+body {
+  background: var(--night);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.5;
+}
+.wrap {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding-inline: 16px;
+  padding-block: 28px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+header { display: flex; flex-direction: column; gap: 4px; }
+.eyebrow {
+  font-family: var(--label);
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+h1 {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(2.4rem, 8vw, 3.4rem);
+  line-height: 1;
+  text-wrap: balance;
+}
+h1 em { font-style: italic; font-weight: 500; color: var(--lamp); }
+
+.picker { display: flex; flex-direction: column; gap: 10px; }
+.picker-label {
+  font-family: var(--label);
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 6px;
+}
+@media (max-width: 480px) {
+  .grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}
+.num {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.25rem;
+  font-variant-numeric: lining-nums tabular-nums;
+  height: 2.6rem;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.num:hover { border-color: var(--lamp); }
+.num:focus-visible { outline: 2px solid var(--lamp); outline-offset: 2px; }
+.num[aria-pressed="true"] {
+  background: var(--lamp);
+  border-color: var(--lamp);
+  color: var(--night);
+}
+.num.missing { border-style: dashed; color: var(--muted); }
+.num.missing[aria-pressed="true"] { background: var(--line); border-color: var(--muted); color: var(--ink); }
+
+.leaf {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 28px 22px 24px;
+  overflow: hidden;
+  background-image: radial-gradient(ellipse at 85% 0%, var(--lamp-soft), transparent 60%);
+}
+.roman {
+  position: absolute;
+  right: 14px;
+  top: -6px;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 6.5rem;
+  line-height: 1;
+  color: var(--line);
+  pointer-events: none;
+  user-select: none;
+}
+.leaf-head {
+  position: relative;
+  font-family: var(--label);
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  color: var(--lamp);
+  margin: 0 0 14px;
+}
+.stanza {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(1.15rem, 3.6vw, 1.35rem);
+  line-height: 1.45;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.stanza li {
+  padding-left: 1.4em;
+  text-indent: -1.4em;
+  animation: rise 0.45s ease both;
+}
+.stanza li.refrain {
+  font-style: italic;
+  color: var(--lamp);
+  padding-left: 3em;
+  margin-top: 2px;
+}
+@keyframes rise { from { opacity: 0.15; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .stanza li { animation: none; } }
+
+.empty {
+  position: relative;
+  font-family: var(--display);
+  font-size: 1.3rem;
+  line-height: 1.45;
+  margin: 0;
+}
+.empty .refrain-word { font-style: italic; color: var(--lamp); }
+
+.gloss {
+  position: relative;
+  margin: 20px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+.gloss b { color: var(--ink); font-weight: 500; }
+
+.nav { display: flex; justify-content: space-between; gap: 10px; }
+.step {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--label);
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  padding: 10px 16px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.step:hover:not(:disabled) { border-color: var(--lamp); }
+.step:focus-visible { outline: 2px solid var(--lamp); outline-offset: 2px; }
+.step:disabled { opacity: 0.35; cursor: default; }
+
+footer {
+  font-size: 0.85rem;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Edgar Allan Poe · přeložil Vítězslav Nezval</span>
+    <h1>Havran <em>po slokách</em></h1>
+  </header>
+
+  <section class="picker" aria-labelledby="pick-label">
+    <span class="picker-label" id="pick-label">Vyber číslo sloky (1–20)</span>
+    <div class="grid" id="grid" role="group" aria-labelledby="pick-label"></div>
+  </section>
+
+  <article class="leaf" id="leaf" aria-live="polite">
+    <span class="roman" id="roman" aria-hidden="true">I</span>
+    <p class="leaf-head" id="head">Sloka 1 z 18</p>
+    <div id="content"></div>
+    <div class="gloss" id="gloss" hidden></div>
+  </article>
+
+  <nav class="nav" aria-label="Posun mezi slokami">
+    <button class="step" id="prev" type="button">← Předchozí</button>
+    <button class="step" id="next" type="button">Další →</button>
+  </nav>
+
+  <footer>Báseň má 18 slok. Šipkami na klávesnici se dá listovat dopředu i dozadu.</footer>
+</div>
+
+<script>
+const STANZAS = [
+  ["Jednou o půlnoci, maje horečku a rozjímaje",
+   "nad divnými svazky vědy prastaré a záslužné –",
+   "když jsem klímal v polospaní, ozvalo se znenadání",
+   "velmi jemné zaťukání na dvéře – a pak už ne.",
+   "„Je to návštěva, či zdání, bylo to tak nezvučné –",
+   "jednou jen a pak už ne.“"],
+  ["Ach, již při vzpomínce blednu! Myslím, že to bylo v lednu,",
+   "každý uhlík vrhal stín jen přede mne a dál už ne.",
+   "Toužil jsem po kuropění; – marně hledaje v svém čtení",
+   "ulehčení od hoře nad Lenorou – již poslušné",
+   "světice zvou Lenora – nad jménem dívky nadvzdušné,",
+   "jež byla mou a teď už ne."],
+  ["Smutný šelest záclon vlaje z hedvábí a ohýbá je",
+   "s hrůzou – již jsem do té doby neznal ani přibližně;",
+   "abych skryl své polekání, říkal jsem si bez ustání:",
+   "„Je to host, jenž z nenadání zaklepal tak neslyšně –",
+   "pozdní host, jenž z nenadání zaklepal tak neslyšně –",
+   "jednou jen a pak již ne.“"],
+  ["Tu má duše vzmužila se; řek jsem bez rozpaků v hlase:",
+   "„Prosím, pane, nebo paní, odpusťte mi velmožně;",
+   "avšak byl jsem v polospaní, když jste přišel znenadání,",
+   "přeslechl jsem zaklepání – je to skoro nemožné,",
+   "že jste klepal vy“ – a poté otevřel jsem úslužně –",
+   "venku tma a víc už ne."],
+  ["Hledě dlouho do tmy z prahu, stoje v pochybách a v strachu,",
+   "dlouho snil jsem, jak si nikdo netroufal snít mimo mne;",
+   "ale ticho bez rušení, ani slůvka na znamení,",
+   "jenom plaché oslovení „Lenoro!“ zní zimničně,",
+   "to já šeptám „Lenoro!“ – a ozvěna zní zimničně",
+   "jenom to a víc už ne."],
+  ["Vrátil jsem se do pokoje, velmi divě se a boje,",
+   "když jsem zaslech trochu silněj nový šramot poblíž mne.",
+   "„Jistě cos za chumelice padlo mi na okenice;",
+   "podívám se ze světnice, co jsi zač, kdo budíš mne –",
+   "ztlumím na okamžik srdce, najdu tě, kdo budíš mne;“ –",
+   "vítr a nic jiného už ne."],
+  ["Vyrazil jsem okenici, když tu s velkou motanicí",
+   "vstoupil starodávný havran z dob, jež jsou tak záslužné;",
+   "bez poklony, bez váhání, vznešeně jak pán či paní",
+   "usadil se znenadání v póze velmi výhružné",
+   "na poprsí Pallady – a v póze velmi výhružné",
+   "si sedl jen a víc už ne."],
+  ["Pták v svém ebenovém zjevu ponoukal mne do úsměvu",
+   "vážným, přísným chováním, jež bylo velmi vybrané –",
+   "„Ač ti lysá chochol v chůzi, jistě nejsi havran hrůzy,",
+   "jenž se z podsvětního šera v bludné pouti namane –",
+   "řekni mi své pravé jméno, plutonovský havrane!“ –",
+   "Havran děl: „Už víckrát ne.“"],
+  ["Žas jsem nad nevzhledem ptáka, jenž tak bez okolků kráká",
+   "bezobsažnou odpověď, jež prozrazuje bezradné;",
+   "velmi dobře vím, že není skoro ani k uvěření",
+   "pták či zvíře, jež si lení v póze velmi záhadné",
+   "na poprsí nade dveřmi – v póze velmi záhadné",
+   "a říká si: „Už víckrát ne.“"],
+  ["Potom, sedě na mramoru, ustal havran v rozhovoru",
+   "jako duše v jedno slovo samotářsky zabrané –",
+   "až jsem si řek v duchu, takže nedošlo mu to až k sluchu:",
+   "„Věřím pevně na předtuchu, osud často okrad mne –",
+   "jak mé naděje, i on se k ránu odtud vykradne.“",
+   "Však havran dí: „Už víckrát ne.“"],
+  ["Zaražen an na mne hledí s přiléhavou odpovědí,",
+   "říkám si: „Toť bezpochyby pochyt velmi obratně",
+   "od pána, jejž osud vedl neštěstím a navždy svedl,",
+   "takže nic už nedovedl zpívat než ty bezradné –",
+   "pohřební a smutné písně, refrény, tak bezradné,",
+   "jako je: Už víckrát ne!“"],
+  ["Když však havran bez ustání ponoukal mne k usmívání,",
+   "přistrčil jsem křeslo mysle, že mne něco napadne,",
+   "když se vhroužím do sametu ve vzpomínkách na tu větu,",
+   "přemýšleje, co as je tu, nad čím řek své bezradné,",
+   "nad čím příšerný ten pták zde říká svoje bezradné",
+   "„už víckrát ne“."],
+  ["Tak jsem seděl nad dohady, mlčky, marně, bez nálady",
+   "pod ptákem, jenž v hloubi prsou nepřestával bodat mne,",
+   "kles jsem s zamyšlenou tváří do podušky na polštáři,",
+   "na niž padá lampa, v záři matné, mdlé a malátné,",
+   "ale do níž nevboří své ruce, mdlé a malátné,",
+   "ona víckrát, víckrát ne."],
+  ["Zdálo se, že u stínidla houstne světlo od kadidla,",
+   "že bezpochyby anděl v zvoncích z nebe propadne.",
+   "„Chudáku, tvůj Bůh ti v zpěvu posílá sem pro úlevu",
+   "balzám na tvou starou něhu, po němž navždy vychladne,",
+   "po němž láska k Lenoře v tvé mysli navždy zapadne“ –",
+   "však havran děl: „Už víckrát ne.“"],
+  ["„Proroku,“ dím, „mene tekel, ať jsi pták anebo z pekel,",
+   "synu podsvětí, a přece proroku, pojď hádat mně –",
+   "statečně, byť opuštěný žiji zaklet v této zemi,",
+   "dům mám hrůzou obklíčený, zda tvá věštba uhádne,",
+   "zdali najdu balzám v smrti, zda tvá věštba uhádne“ –",
+   "havran dí: „Už víckrát ne.“"],
+  ["„Proroku,“ dím, „mene tekel, ať jsi pták anebo z pekel,",
+   "při nebi, jež nad námi je, při Bohu, jenž leká mne,",
+   "rci té duši, jež žal tají, zdali aspoň jednou v ráji",
+   "tu, již svatí nazývají Lenora, kdy přivine,",
+   "jasnou dívku Lenoru kdy v náručí své přivine“ –",
+   "havran dí: „Už víckrát ne.“"],
+  ["„Tos řek jistě na znamení, že se chystáš k rozloučení,",
+   "táhni zpátky do bouře a do podsvětí, satane! –",
+   "nenech mi tu, starý lháři, ani pírka na polštáři,",
+   "neruš pokoj mého stáří, opusť sochu, havrane!",
+   "Vyndej zobák z mého srdce, opusť sochu, havrane!“",
+   "Havran dí: „Už víckrát ne.“"],
+  ["Pak se klidně ulebedí, stále sedí, stále sedí",
+   "jako ďábel na bělostných ňadrech Pallas Athéné;",
+   "oči v snění přimhouřeny na pozadí bílé stěny,",
+   "lampa vrhá beze změny jeho stín, jímž uhrane –",
+   "a má duše z toho stínu, jímž mne navždy uhrane,",
+   "nevzchopí se – víckrát ne."]
+];
+
+const GLOSS = [
+  { re: /Pallad|Pallas/, term: "Pallas (Athéna)", text: "řecká bohyně moudrosti; v pokoji je její bílá mramorová busta." },
+  { re: /plutonovský/, term: "plutonovský", text: "od Pluta, římského boha podsvětí." },
+  { re: /\bdí\b|\bdím\b|\bděl\b/, term: "dí, dím, děl", text: "zastarale „říká, říkám, řekl“." },
+  { re: /\ban\b/, term: "an", text: "zastarale „on“ (ve smyslu „zatímco on“)." },
+  { re: /mene tekel/, term: "mene tekel", text: "tajemné varování, předzvěst zkázy." }
+];
+
+const MAX = 20;
+const TOTAL = STANZAS.length;
+const grid = document.getElementById("grid");
+const content = document.getElementById("content");
+const head = document.getElementById("head");
+const roman = document.getElementById("roman");
+const gloss = document.getElementById("gloss");
+const prev = document.getElementById("prev");
+const next = document.getElementById("next");
+let current = 1;
+
+function toRoman(n) {
+  const map = [[10, "X"], [9, "IX"], [5, "V"], [4, "IV"], [1, "I"]];
+  let out = "";
+  for (const [v, s] of map) while (n >= v) { out += s; n -= v; }
+  return out;
+}
+
+for (let i = 1; i <= MAX; i++) {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "num" + (i > TOTAL ? " missing" : "");
+  b.id = "num-" + i;
+  b.textContent = i;
+  b.setAttribute("aria-pressed", "false");
+  b.setAttribute("aria-label", i > TOTAL ? `Číslo ${i} (sloka neexistuje)` : `Sloka ${i}`);
+  b.addEventListener("click", () => show(i));
+  grid.appendChild(b);
+}
+
+function show(n) {
+  current = n;
+  grid.querySelectorAll(".num").forEach((b, idx) => {
+    b.setAttribute("aria-pressed", String(idx + 1 === n));
+  });
+  roman.textContent = toRoman(n);
+  prev.disabled = n <= 1;
+  next.disabled = n >= MAX;
+  content.innerHTML = "";
+
+  if (n > TOTAL) {
+    head.textContent = `Číslo ${n}`;
+    const p = document.createElement("p");
+    p.className = "empty";
+    p.innerHTML = `Báseň končí osmnáctou slokou, takže ${n}. sloka neexistuje. Havran by řekl: <span class="refrain-word">„Už víckrát ne.“</span>`;
+    content.appendChild(p);
+    gloss.hidden = true;
+  } else {
+    head.textContent = `Sloka ${n} z ${TOTAL}`;
+    const ol = document.createElement("ol");
+    ol.className = "stanza";
+    STANZAS[n - 1].forEach((line, i, arr) => {
+      const li = document.createElement("li");
+      li.textContent = line;
+      li.style.animationDelay = (i * 55) + "ms";
+      if (i === arr.length - 1) li.className = "refrain";
+      ol.appendChild(li);
+    });
+    content.appendChild(ol);
+
+    const text = STANZAS[n - 1].join(" ");
+    const hits = GLOSS.filter(g => g.re.test(text));
+    gloss.innerHTML = "";
+    hits.forEach(g => {
+      const d = document.createElement("div");
+      d.innerHTML = `<b>${g.term}</b> – ${g.text}`;
+      gloss.appendChild(d);
+    });
+    gloss.hidden = hits.length === 0;
+  }
+
+  try { history.replaceState(null, "", "#" + n); } catch (e) {}
+}
+
+prev.addEventListener("click", () => { if (current > 1) show(current - 1); });
+next.addEventListener("click", () => { if (current < MAX) show(current + 1); });
+document.addEventListener("keydown", e => {
+  if (e.key === "ArrowLeft" && current > 1) show(current - 1);
+  if (e.key === "ArrowRight" && current < MAX) show(current + 1);
+});
+
+let start = 1;
+try {
+  const h = parseInt(location.hash.slice(1), 10);
+  if (h >= 1 && h <= MAX) start = h;
+} catch (e) {}
+show(start);
+</script>
+
+</body></html>
